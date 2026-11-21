@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skibidi Sentry Web Novel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;1,7..72,400&display=swap" rel="stylesheet">
+<style>
+/* Plan: signal-blue accent on ink (dark) or cold paper (light); Chakra Petch display, Literata body; single reading column. */
+:root{
+  --bg:#f3f5f8;
+  --surface:#ffffff;
+  --ink:#15202b;
+  --muted:#5d6b7a;
+  --line:#d8dfe7;
+  --accent:#0a6cff;
+  --sfx:#d6336c;
+  --display:"Chakra Petch",system-ui,sans-serif;
+  --body:"Literata",Georgia,serif;
+  --fs:19px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0c1118;--surface:#141b25;--ink:#e6ebf2;--muted:#93a1b2;--line:#243142;--accent:#4aa3ff;--sfx:#ff7aa8;color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0c1118;--surface:#141b25;--ink:#e6ebf2;--muted:#93a1b2;--line:#243142;--accent:#4aa3ff;--sfx:#ff7aa8;color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.75}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.bar-in{max-width:720px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:8px}
+.brand{font-family:var(--display);font-weight:700;letter-spacing:.04em;text-transform:uppercase;font-size:14px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btn{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-family:var(--display);font-weight:600;font-size:14px;cursor:pointer;min-height:36px}
+.btn:hover{border-color:var(--accent)}
+.progress{height:3px}
+.progress i{display:block;height:100%;width:0;background:var(--accent)}
+
+main{max-width:720px;margin:0 auto;padding:32px 16px 64px}
+.cover{margin-bottom:40px;padding-bottom:24px;border-bottom:1px solid var(--line)}
+.cover h1{font-family:var(--display);font-weight:700;font-size:clamp(32px,9vw,48px);line-height:1.1;margin:0 0 8px;text-transform:uppercase;letter-spacing:.03em}
+.cover p{margin:0;color:var(--muted);font-family:var(--display)}
+section{scroll-margin-top:64px;margin-bottom:56px}
+.eyebrow{font-family:var(--display);font-weight:600;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 8px}
+h2.title{font-family:var(--display);font-weight:700;font-size:clamp(26px,6.5vw,36px);line-height:1.15;margin:0 0 24px;text-wrap:balance}
+.story p{font-size:var(--fs);margin:0 0 1.15em;max-width:65ch}
+.story p.sfx{font-family:var(--display);font-weight:700;color:var(--sfx);font-size:calc(var(--fs) + 5px);letter-spacing:.04em;margin:1.2em 0}
+.story p.sign{text-align:right;font-style:italic;color:var(--muted);max-width:none}
+.story p.cut{font-family:var(--display);font-weight:600;letter-spacing:.18em;color:var(--muted);text-align:center;margin-top:1.6em}
+
+.locked{border:1px dashed var(--line);background:var(--surface);border-radius:12px;padding:18px;display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.locked b{font-family:var(--display);display:block}
+.locked span{color:var(--muted);font-size:14px}
+.pill{font-family:var(--display);font-weight:600;font-size:12px;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:4px 10px}
+
+dialog{border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);padding:0;width:min(420px,calc(100% - 32px))}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+.dl{padding:18px}
+.dl h2{font-family:var(--display);font-size:18px;margin:0 0 12px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+.row:first-of-type{border-top:0}
+.seg{display:flex;gap:6px}
+.chap{display:block;width:100%;text-align:left;padding:12px;border:1px solid var(--accent);border-radius:10px;background:transparent;cursor:pointer;margin-bottom:8px}
+.chap.off{border-color:var(--line);color:var(--muted);cursor:default}
+.chap small{display:block;color:var(--muted);font-family:var(--display)}
+.close{margin-top:10px;width:100%}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="bar-in">
+    <div class="brand">Skibidi Sentry</div>
+    <button class="btn" id="openContents" type="button">Chapters</button>
+    <button class="btn" id="openSettings" type="button" aria-label="Reading settings">Aa</button>
+  </div>
+  <div class="progress" aria-hidden="true"><i id="prog"></i></div>
+</header>
+
+<main>
+  <div class="cover">
+    <h1>Skibidi Sentry</h1>
+    <p>Season 1 &middot; Web Novel</p>
+  </div>
+
+  <section id="ch0">
+    <p class="eyebrow">Season 1 &middot; Chapter 0</p>
+    <h2 class="title">Arise Arc</h2>
+    <div class="story">
+      <p>They managed to capture our titan. Fortunately, we finished upgrading another titan to track down the second titan that fled during their initial attack, and sent him to the location. But he was also captured, and our plan to incapacitate them failed as the first infected titan suddenly appeared and sabotaged the mission, leaving all three titans in their hands.</p>
+      <p>We were in despair because their forces began to conquer almost the entire earth, destroy our friends' bases, and nearly locate our position. But at the exact moment, they arrived, giving us a new hope to fight back.</p>
+      <p class="sign">&mdash; Scientist TV Man</p>
+    </div>
+  </section>
+
+  <section id="ep1">
+    <p class="eyebrow">Season 1 &middot; Episode 1</p>
+    <h2 class="title">The Sentry Man Appears</h2>
+    <div class="story">
+      <p>Your camera lens is severely cracked and your vision blurs with heavy static. Right in front of you, an Astro Toilet dives down at blinding speed with its laser blade unsheathed, ready to smash your camera to pieces. You can only lie there, completely helpless.</p>
+      <p class="sfx">"CRASH!"</p>
+      <p>Suddenly, a gleaming steel sword flashes through the air, slicing the Astro Toilet clean in half before it erupts into a violent explosion!</p>
+      <p>Through the smoke, a heavily armored soldier with a distinct, blocky mechanical head steps forward, shielding you. Engraved on his chest plate is the emblem of a brand-new faction: Sentry Man. He smoothly spins his sword, turns around, and extends a metallic hand down toward your camera.</p>
+      <p>Your lens captures his powerful first appearance, and the screen slowly cuts to black.</p>
+      <p class="cut">BLACKOUT</p>
+    </div>
+  </section>
+
+  <section id="ep2">
+    <div class="locked">
+      <div><b>Episode 2</b><span>Not released yet</span></div>
+      <span class="pill">Locked</span>
+    </div>
+  </section>
+</main>
+
+<dialog id="contents">
+  <div class="dl">
+    <h2>Chapters</h2>
+    <button class="chap" type="button" data-go="ch0"><small>Season 1 &middot; Chapter 0</small>Arise Arc</button>
+    <button class="chap" type="button" data-go="ep1"><small>Season 1 &middot; Episode 1</small>The Sentry Man Appears</button>
+    <div class="chap off"><small>Season 1 &middot; Episode 2</small>Locked</div>
+    <button class="btn close" type="button" data-close>Close</button>
+  </div>
+</dialog>
+
+<dialog id="settings">
+  <div class="dl">
+    <h2>Reading settings</h2>
+    <div class="row"><span>Text size</span><div class="seg"><button class="btn" type="button" id="fsDown" aria-label="Smaller text">A-</button><button class="btn" type="button" id="fsUp" aria-label="Larger text">A+</button></div></div>
+    <div class="row"><span>Theme</span><div class="seg"><button class="btn" type="button" data-theme-set="light">Light</button><button class="btn" type="button" data-theme-set="dark">Dark</button></div></div>
+    <button class="btn close" type="button" data-close>Done</button>
+  </div>
+</dialog>
+
+<script>
+(function(){
+  var root=document.documentElement, fs=19;
+  function get(k){try{return localStorage.getItem(k)}catch(e){return null}}
+  function set(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+  var savedFs=parseInt(get("ss-fs"),10); if(savedFs>=15&&savedFs<=26){fs=savedFs}
+  var savedTheme=get("ss-theme"); if(savedTheme==="light"||savedTheme==="dark"){root.setAttribute("data-theme",savedTheme)}
+  function applyFs(){root.style.setProperty("--fs",fs+"px");set("ss-fs",fs)}
+  applyFs();
+  document.getElementById("fsUp").onclick=function(){if(fs<26){fs++;applyFs()}};
+  document.getElementById("fsDown").onclick=function(){if(fs>15){fs--;applyFs()}};
+  document.querySelectorAll("[data-theme-set]").forEach(function(b){
+    b.onclick=function(){var t=b.getAttribute("data-theme-set");root.setAttribute("data-theme",t);set("ss-theme",t)}
+  });
+  function openDlg(id){var d=document.getElementById(id);if(d.showModal){try{d.showModal()}catch(e){d.setAttribute("open","")}}else{d.setAttribute("open","")}}
+  document.getElementById("openContents").onclick=function(){openDlg("contents")};
+  document.getElementById("openSettings").onclick=function(){openDlg("settings")};
+  document.querySelectorAll("[data-close]").forEach(function(b){b.onclick=function(){b.closest("dialog").close()}});
+  document.querySelectorAll("[data-go]").forEach(function(b){
+    b.onclick=function(){
+      document.getElementById("contents").close();
+      var el=document.getElementById(b.getAttribute("data-go"));
+      if(el){el.scrollIntoView()}
+    }
+  });
+  var prog=document.getElementById("prog");
+  function onScroll(){
+    var h=document.documentElement.scrollHeight-window.innerHeight;
+    prog.style.width=(h>0?Math.min(100,window.scrollY/h*100):0)+"%";
+  }
+  window.addEventListener("scroll",onScroll,{passive:true});onScroll();
+})();
+</script>
+</body>
+</html>
